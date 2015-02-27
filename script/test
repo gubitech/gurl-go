@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+# Make sure we have the correct gom path.
+
+cd "$(dirname "$0")/.."
