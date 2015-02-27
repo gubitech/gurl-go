@@ -1,51 +1,57 @@
 package main
 
 import (
-    "fmt"
-    curl "github.com/andelf/go-curl"
-    "github.com/spf13/cobra"
+	"fmt"
+	curl "github.com/andelf/go-curl"
+	"github.com/spf13/cobra"
+	"os"
 )
 
 var release string
 
 func main() {
-  version := fmt.Sprintf("Gurl: v%s", release)
-  GurlCmd := &cobra.Command{
-    Use:   "gurl",
-    Short: "Gurl is a wrapper around cURL",
-    Long: "blah blah blah",
-    Run: func(cmd *cobra.Command, args []string) {
-      easy := curl.EasyInit()
-      defer easy.Cleanup()
+	version := fmt.Sprintf("Gurl: v%s", release)
+	GurlCmd := &cobra.Command{
+		Use:   "gurl",
+		Short: "Gurl is a wrapper around cURL",
+		Long:  "blah blah blah",
+		Run: func(cmd *cobra.Command, args []string) {
+			if os.Getenv("GURL_SERVER") == "" {
+				fmt.Printf("ERROR: GURL_SERVER not set! Call the `set` command first.")
+				os.Exit(-1)
+			}
 
-      easy.Setopt(curl.OPT_USERAGENT, fmt.Sprintf("Gurl: v %s", release))
-      easy.Setopt(curl.OPT_URL, "https://api.github.com/")
+			easy := curl.EasyInit()
+			defer easy.Cleanup()
 
-      // make a callback function
-      fooTest := func (buf []byte, userdata interface{}) bool {
-          println("DEBUG: size=>", len(buf))
-          println("DEBUG: content=>", string(buf))
-          return true
-      }
+			easy.Setopt(curl.OPT_USERAGENT, fmt.Sprintf("Gurl: v %s", release))
+			easy.Setopt(curl.OPT_URL, "https://api.github.com/")
 
-      easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
+			// make a callback function
+			fooTest := func(buf []byte, userdata interface{}) bool {
+				println("DEBUG: size=>", len(buf))
+				println("DEBUG: content=>", string(buf))
+				return true
+			}
 
-      if err := easy.Perform(); err != nil {
-          fmt.Printf("ERROR: %v\n", err)
-      }
-    },
-  }
+			easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
 
-  versionCmd := &cobra.Command {
-      Use:   "version",
-      Short: "Print the version number of gurl",
-      Long:  "The version number of gurl is also the User-Agent that's used for requests",
-      Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println(version)
-      },
-  }
+			if err := easy.Perform(); err != nil {
+				fmt.Printf("ERROR: %v\n", err)
+			}
+		},
+	}
 
-  GurlCmd.AddCommand(versionCmd)
+	versionCmd := &cobra.Command{
+		Use:   "version",
+		Short: "Print the version number of gurl",
+		Long:  "The version number of gurl is also the User-Agent that's used for requests",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(version)
+		},
+	}
 
-  GurlCmd.Execute()
+	GurlCmd.AddCommand(versionCmd)
+
+	GurlCmd.Execute()
 }
