@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 cd $(dirname $0)/..
-RELEASE=$(git rev-parse HEAD)
+VERSION=0.0.1
+SHA=$(git rev-parse HEAD)
 GOPATH=$(pwd) go build \
-  -ldflags "-X main.release $RELEASE" \
-  -o kurl
+  -ldflags "-X main.release $VERSION-$SHA" \
+  -o gurl
