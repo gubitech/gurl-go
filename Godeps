@@ -1,2 +1,5 @@
 github.com/andelf/go-curl
 github.com/spf13/cobra
+
+# testing
+github.com/stretchr/testify/assert
