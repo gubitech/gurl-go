@@ -5,13 +5,15 @@ import (
 	"os"
 	"flag"
 
-	curl "github.com/andelf/go-curl"
 	"github.com/spf13/cobra"
 	"github.com/rakyll/globalconf"
 )
 
-// this is set by the build script
-var release string
+
+var (
+	release string // this is set by the build script
+	flagServer = flag.String("server", "", "Current server to execute calls against.")
+)
 
 type flagValue struct {
 	str string
@@ -30,10 +32,12 @@ func newFlagValue(val string) *flagValue {
 	return &flagValue{str: val}
 }
 
-var (
-	flagServer = flag.String("server", "", "Current server to execute calls against.")
-  flagAddress = flag.String("addr", "", "Address of the person.")
-)
+func checkServer(server string) {
+	if server == "" {
+		println("ERROR: server not set! Call the `set` command first.")
+		os.Exit(-1)
+	}
+}
 
 func main() {
 	conf, err := globalconf.New("gurl")
@@ -47,34 +51,71 @@ func main() {
 	GurlCmd := &cobra.Command{
 		Use:   "gurl",
 		Short: "Gurl is a wrapper around cURL",
-		Long:  "blah blah blah",
+		Long:  "Gurl is a wrapper around cURL",
 		Run: func(cmd *cobra.Command, args []string) {
-			if *flagServer == "" {
-				println("ERROR: server not set! Call the `set` command first.")
-				fmt.Printf("%s", *flagAddress)
-				os.Exit(-1)
-			} else {
-				fmt.Printf("Using %s\n", *flagServer)
-			}
+			checkServer(*flagServer)
 
-			easy := curl.EasyInit()
-			defer easy.Cleanup()
+			execute("GET", version, *flagServer)
+		},
+	}
 
-			easy.Setopt(curl.OPT_USERAGENT, version)
-			easy.Setopt(curl.OPT_URL, *flagServer)
+	getCmd := &cobra.Command{
+		Use:   "get",
+		Short: "Performs a GET request",
+		Run: func(cmd *cobra.Command, args []string) {
+			checkServer(*flagServer)
 
-			// make a callback function
-			fooTest := func(buf []byte, userdata interface{}) bool {
-				println("DEBUG: size=>", len(buf))
-				println("DEBUG: content=>", string(buf))
-				return true
-			}
+			execute("GET", version, *flagServer)
+		},
+	}
 
-			easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
+	headCmd := &cobra.Command{
+		Use:   "head",
+		Short: "Performs a HEAD request",
+		Run: func(cmd *cobra.Command, args []string) {
+			checkServer(*flagServer)
 
-			if err := easy.Perform(); err != nil {
-				fmt.Printf("ERROR: %v\n", err)
-			}
+			execute("HEAD", version, *flagServer)
+		},
+	}
+
+	optionsCmd := &cobra.Command{
+		Use:   "options",
+		Short: "Performs a OPTIONS request",
+		Run: func(cmd *cobra.Command, args []string) {
+			checkServer(*flagServer)
+
+			execute("OPTIONS", version, *flagServer)
+		},
+	}
+
+	postCmd := &cobra.Command{
+		Use:   "post",
+		Short: "Performs a POST request",
+		Run: func(cmd *cobra.Command, args []string) {
+			checkServer(*flagServer)
+
+			execute("POST", version, *flagServer)
+		},
+	}
+
+	patchCmd := &cobra.Command{
+		Use:   "post",
+		Short: "Performs a PATCH request",
+		Run: func(cmd *cobra.Command, args []string) {
+			checkServer(*flagServer)
+
+			execute("PATCH", version, *flagServer)
+		},
+	}
+
+	deleteCmd := &cobra.Command{
+		Use:   "delete",
+		Short: "Performs a DELETE request",
+		Run: func(cmd *cobra.Command, args []string) {
+			checkServer(*flagServer)
+
+			execute("DELETE", version, *flagServer)
 		},
 	}
 
@@ -98,6 +139,12 @@ func main() {
 		},
 	}
 
+	GurlCmd.AddCommand(getCmd)
+	GurlCmd.AddCommand(headCmd)
+	GurlCmd.AddCommand(optionsCmd)
+	GurlCmd.AddCommand(postCmd)
+	GurlCmd.AddCommand(patchCmd)
+	GurlCmd.AddCommand(deleteCmd)
 	GurlCmd.AddCommand(setCmd)
 	GurlCmd.AddCommand(versionCmd)
 
