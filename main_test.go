@@ -8,3 +8,7 @@ import (
 func TestNothing(t *testing.T) {
 	assert.NotNil(t, "lol")
 }
+
+// I do not yet know how testing works in Go. But I need to test:
+// 1. That an unset server fails
+// 2. That a set server passes
