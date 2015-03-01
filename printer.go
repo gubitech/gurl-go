@@ -10,16 +10,28 @@ func ErrorPrinter(err interface{}) {
 	fmt.Printf("ERROR: %v\n", err)
 }
 
-func PrintJson(buffer []byte) {
-	var parsed map[string]interface{}
+func isJson(buffer []byte) bool {
+	if string(buffer[0]) == "{" || (string(buffer[0]) == "[" && string(buffer[1]) == "{") {
+		return true
+	} else {
+		return false
+	}
+}
 
-	err := json.Unmarshal(buffer, &parsed)
-	if err != nil {
-		ErrorPrinter(err)
+func PrintJSON(buffer []byte) {
+	if !isJson(buffer) {
+		os.Stdout.Write(buffer)
+	} else {
+		var parsed map[string]interface{}
+
+		err := json.Unmarshal(buffer, &parsed)
+		if err != nil {
+			ErrorPrinter(err)
+		}
+		b, err := json.MarshalIndent(parsed, "", "  ")
+		if err != nil {
+			ErrorPrinter(err)
+		}
+		os.Stdout.Write(b)
 	}
-	b, err := json.MarshalIndent(parsed, "", "  ")
-	if err != nil {
-		ErrorPrinter(err)
-	}
-	os.Stdout.Write(b)
 }

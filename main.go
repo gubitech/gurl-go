@@ -54,7 +54,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("GET", version, *flagServer)
+			execute("GET", version, args)
 		},
 	}
 
@@ -64,7 +64,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("GET", version, *flagServer)
+			execute("GET", version, args)
 		},
 	}
 
@@ -74,7 +74,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("HEAD", version, *flagServer)
+			execute("HEAD", version, args)
 		},
 	}
 
@@ -84,7 +84,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("OPTIONS", version, *flagServer)
+			execute("OPTIONS", version, args)
 		},
 	}
 
@@ -94,7 +94,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("POST", version, *flagServer)
+			execute("POST", version, args)
 		},
 	}
 
@@ -104,7 +104,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("PATCH", version, *flagServer)
+			execute("PATCH", version, args)
 		},
 	}
 
@@ -114,7 +114,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
 
-			execute("DELETE", version, *flagServer)
+			execute("DELETE", version, args)
 		},
 	}
 
