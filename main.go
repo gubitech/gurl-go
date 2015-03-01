@@ -34,7 +34,7 @@ func newFlagValue(val string) *flagValue {
 
 func checkServer(server string) {
 	if server == "" {
-		println("ERROR: server not set! Call the `set` command first.")
+		ErrorPrinter("ERROR: server not set! Call the `set` command first.")
 		os.Exit(-1)
 	}
 }
@@ -42,7 +42,7 @@ func checkServer(server string) {
 func main() {
 	conf, err := globalconf.New("gurl")
 	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
+		ErrorPrinter(err)
 	}
 	conf.ParseAll()
 

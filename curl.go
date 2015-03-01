@@ -1,16 +1,10 @@
 package main
 
 import (
-	"fmt"
-
 	curl "github.com/andelf/go-curl"
 )
 
-// make a callback function
-func output(buf []byte, userdata interface{}) bool {
-  println(string(buf))
-  return true
-}
+var buffer []byte
 
 func execute(verb string, version string, server string) {
   easy := curl.EasyInit()
@@ -19,9 +13,14 @@ func execute(verb string, version string, server string) {
   easy.Setopt(curl.OPT_USERAGENT, version)
   easy.Setopt(curl.OPT_URL, *flagServer)
 
-  easy.Setopt(curl.OPT_WRITEFUNCTION, output)
+  easy.Setopt(curl.OPT_WRITEFUNCTION, func (buf []byte, userdata interface{}) bool {
+    buffer = append(buffer, buf...)
+    return true
+  })
 
   if err := easy.Perform(); err != nil {
-    fmt.Printf("ERROR: %v\n", err)
+    ErrorPrinter(err)
   }
+
+  PrintJson(buffer)
 }
