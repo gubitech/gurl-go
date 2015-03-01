@@ -1,4 +1,8 @@
-/coverage.out
 /gurl
 /pkg
 /src
+.gopack
+build
+tmp
+log
+.env
