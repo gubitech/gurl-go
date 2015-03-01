@@ -1,25 +1,25 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-  "os"
-  "encoding/json"
+	"os"
 )
 
 func ErrorPrinter(err interface{}) {
-  fmt.Printf("ERROR: %v\n", err)
+	fmt.Printf("ERROR: %v\n", err)
 }
 
 func PrintJson(buffer []byte) {
-  var parsed map[string]interface{}
+	var parsed map[string]interface{}
 
-  err := json.Unmarshal(buffer, &parsed)
-  if err != nil {
-    ErrorPrinter(err)
-  }
-  b, err := json.MarshalIndent(parsed, "", "  ")
-  if err != nil {
-    ErrorPrinter(err)
-  }
-  os.Stdout.Write(b)
+	err := json.Unmarshal(buffer, &parsed)
+	if err != nil {
+		ErrorPrinter(err)
+	}
+	b, err := json.MarshalIndent(parsed, "", "  ")
+	if err != nil {
+		ErrorPrinter(err)
+	}
+	os.Stdout.Write(b)
 }

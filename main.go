@@ -1,17 +1,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"flag"
 
-	"github.com/spf13/cobra"
 	"github.com/rakyll/globalconf"
+	"github.com/spf13/cobra"
 )
 
-
 var (
-	release string // this is set by the build script
+	release    string // this is set by the build script
 	flagServer = flag.String("server", "", "Current server to execute calls against.")
 )
 
