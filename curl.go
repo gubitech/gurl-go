@@ -25,6 +25,9 @@ func execute(verb string, version string, args []string) {
 		}
 	}
 
+	// always use the .netrc file
+	easy.Setopt(curl.OPT_NETRC, true)
+
 	easy.Setopt(curl.OPT_USERAGENT, version)
 	easy.Setopt(curl.OPT_URL, endpoint)
 
