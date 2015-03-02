@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	release    string // this is set by the build script
-	flagServer = flag.String("server", "", "Current server to execute calls against.")
+	release        string // this is set by the build script
+	flagServer     = flag.String("server", "", "Current server to execute calls against.")
+	includeHeaders bool
 )
 
 type flagValue struct {
@@ -63,6 +64,10 @@ func main() {
 		Short: "Performs a GET request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
+
+			if includeHeaders {
+				args = append(args, "includeHeaders")
+			}
 
 			execute("GET", version, args)
 		},
@@ -121,7 +126,7 @@ func main() {
 	setCmd := &cobra.Command{
 		Use:   "set",
 		Short: "Set the server to use",
-		Long:  "This server is what all your requests are made to",
+		Long:  "All your requests are made to this server",
 		Run: func(cmd *cobra.Command, args []string) {
 			conf.Set("", &flag.Flag{Name: "server", Value: newFlagValue(args[0])})
 			fmt.Printf("Set <%s>\n", args[0])
@@ -146,6 +151,8 @@ func main() {
 	GurlCmd.AddCommand(deleteCmd)
 	GurlCmd.AddCommand(setCmd)
 	GurlCmd.AddCommand(versionCmd)
+
+	GurlCmd.PersistentFlags().BoolVarP(&includeHeaders, "include", "i", false, "Include the HTTP-header in the output")
 
 	GurlCmd.Execute()
 }
