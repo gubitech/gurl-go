@@ -6,7 +6,9 @@ import (
 	curl "github.com/andelf/go-curl"
 )
 
-var buffer []byte
+var (
+	buffer []byte
+)
 
 func execute(verb string, version string, args []string) {
 	var endpoint string
@@ -20,7 +22,10 @@ func execute(verb string, version string, args []string) {
 		} else {
 			switch a {
 			case "includeHeaders":
-				easy.Setopt(curl.OPT_HEADER, true)
+				easy.Setopt(curl.OPT_HEADERFUNCTION, func(buf []byte, userdata interface{}) bool {
+					Print(buf)
+					return true
+				})
 			}
 		}
 	}
@@ -40,5 +45,5 @@ func execute(verb string, version string, args []string) {
 		ErrorPrinter(err)
 	}
 
-	PrintJSON(buffer)
+	Print(buffer)
 }

@@ -11,14 +11,16 @@ func ErrorPrinter(err interface{}) {
 }
 
 func isJson(buffer []byte) bool {
-	if string(buffer[0]) == "{" || (string(buffer[0]) == "[" && string(buffer[1]) == "{") {
+	buf := string(buffer)
+
+	if string(buf[0]) == "{" || (string(buf[0]) == "[" && string(buf[1]) == "{") {
 		return true
 	} else {
 		return false
 	}
 }
 
-func PrintJSON(buffer []byte) {
+func Print(buffer []byte) {
 	if !isJson(buffer) {
 		os.Stdout.Write(buffer)
 	} else {
