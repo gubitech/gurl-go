@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+  "io/ioutil"
 
 	"github.com/rakyll/globalconf"
 	"github.com/spf13/cobra"
@@ -133,6 +134,19 @@ func main() {
 		},
 	}
 
+	showCmd := &cobra.Command{
+		Use:   "show",
+		Short: "Shows the server you're using",
+		Run: func(cmd *cobra.Command, args []string) {
+			contents, err := ioutil.ReadFile(conf.Filename)
+			fmt.Printf("Currently using: %s\n", conf.Filename)
+			if err != nil {
+				ErrorPrinter(err)
+			}
+			fmt.Print(string(contents))
+		},
+	}
+
 	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print the version number of gurl",
@@ -149,7 +163,9 @@ func main() {
 	GurlCmd.AddCommand(postCmd)
 	GurlCmd.AddCommand(patchCmd)
 	GurlCmd.AddCommand(deleteCmd)
+
 	GurlCmd.AddCommand(setCmd)
+	GurlCmd.AddCommand(showCmd)
 	GurlCmd.AddCommand(versionCmd)
 
 	GurlCmd.PersistentFlags().BoolVarP(&includeHeaders, "include", "i", false, "Include the HTTP-header in the output")
