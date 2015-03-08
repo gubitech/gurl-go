@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	curl "github.com/andelf/go-curl"
 )
@@ -10,30 +11,41 @@ var (
 	buffer []byte
 )
 
-func execute(verb string, version string, args []string) {
-	var endpoint string
+func execute(verb string, version string, args []string, flags []string) {
+	endpoint := *flagServer + args[0]
+	fmt.Printf("Hitting %s\n", endpoint)
 
 	easy := curl.EasyInit()
 	defer easy.Cleanup()
 
-	for i, a := range args {
-		if i == 0 {
-			endpoint = fmt.Sprint(*flagServer, a)
-		} else {
-			switch a {
-			case "includeHeaders":
-				easy.Setopt(curl.OPT_HEADERFUNCTION, func(buf []byte, userdata interface{}) bool {
-					Print(buf)
-					return true
-				})
-			case "verbose":
-				easy.Setopt(curl.OPT_VERBOSE, true)
-			}
+	// set the custom flags
+	for _, f := range flags {
+		switch f {
+		case "includeHeaders":
+			easy.Setopt(curl.OPT_HEADERFUNCTION, func(buf []byte, userdata interface{}) bool {
+				Print(buf)
+				return true
+			})
+		case "verbose":
+			easy.Setopt(curl.OPT_VERBOSE, true)
 		}
+	}
+
+	// looks like we've got some interesting data
+	if len(args) > 1 {
+		easy.Setopt(curl.OPT_POSTFIELDS, args[1])
+		// must set
+		easy.Setopt(curl.OPT_POSTFIELDSIZE, len(args[1]))
+		// disable HTTP/1.1 Expect 100
+		easy.Setopt(curl.OPT_HTTPHEADER, []string{"Expect:"})
 	}
 
 	// always use the .netrc file
 	easy.Setopt(curl.OPT_NETRC, true)
+	// always follow location
+	easy.Setopt(curl.OPT_FOLLOWLOCATION, true)
+	// stop after trying for a minute
+	easy.Setopt(curl.OPT_TIMEOUT, 60)
 
 	easy.Setopt(curl.OPT_USERAGENT, version)
 	easy.Setopt(curl.OPT_URL, endpoint)
@@ -42,6 +54,8 @@ func execute(verb string, version string, args []string) {
 		buffer = append(buffer, buf...)
 		return true
 	})
+
+	easy.Setopt(curl.OPT_CUSTOMREQUEST, strings.ToUpper(verb))
 
 	if err := easy.Perform(); err != nil {
 		ErrorPrinter(err)

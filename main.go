@@ -41,16 +41,18 @@ func checkServer(server string) {
 	}
 }
 
-func appendGlobals(args []string) []string {
+func appendFlags() []string {
+	var flags []string
+
 	if includeHeaders {
-		args = append(args, "includeHeaders")
+		flags = append(flags, "includeHeaders")
 	}
 
 	if verbose {
-		args = append(args, "verbose")
+		flags = append(flags, "verbose")
 	}
 
-	return args
+	return flags
 }
 
 func main() {
@@ -76,8 +78,8 @@ func main() {
 		Short: "Performs a GET request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-			args = appendGlobals(args)
-			execute("GET", version, args)
+			flags := appendFlags()
+			execute("GET", version, args, flags)
 		},
 	}
 
@@ -86,8 +88,8 @@ func main() {
 		Short: "Performs a HEAD request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-			args = appendGlobals(args)
-			execute("HEAD", version, args)
+			flags := appendFlags()
+			execute("HEAD", version, args, flags)
 		},
 	}
 
@@ -96,8 +98,8 @@ func main() {
 		Short: "Performs a OPTIONS request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-			args = appendGlobals(args)
-			execute("OPTIONS", version, args)
+			flags := appendFlags()
+			execute("OPTIONS", version, args, flags)
 		},
 	}
 
@@ -106,8 +108,8 @@ func main() {
 		Short: "Performs a POST request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-			args = appendGlobals(args)
-			execute("POST", version, args)
+			flags := appendFlags()
+			execute("POST", version, args, flags)
 		},
 	}
 
@@ -116,8 +118,8 @@ func main() {
 		Short: "Performs a PATCH request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-			args = appendGlobals(args)
-			execute("PATCH", version, args)
+			flags := appendFlags()
+			execute("PATCH", version, args, flags)
 		},
 	}
 
@@ -126,8 +128,8 @@ func main() {
 		Short: "Performs a DELETE request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-			args = appendGlobals(args)
-			execute("DELETE", version, args)
+			flags := appendFlags()
+			execute("DELETE", version, args, flags)
 		},
 	}
 
