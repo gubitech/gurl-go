@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
-  "io/ioutil"
 
 	"github.com/rakyll/globalconf"
 	"github.com/spf13/cobra"
