@@ -54,9 +54,7 @@ func main() {
 		Short: "Gurl is a wrapper around cURL",
 		Long:  "Gurl is a wrapper around cURL",
 		Run: func(cmd *cobra.Command, args []string) {
-			checkServer(*flagServer)
-
-			execute("GET", version, args)
+			cmd.Usage()
 		},
 	}
 
