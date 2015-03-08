@@ -26,6 +26,8 @@ func execute(verb string, version string, args []string) {
 					Print(buf)
 					return true
 				})
+			case "verbose":
+				easy.Setopt(curl.OPT_VERBOSE, true)
 			}
 		}
 	}

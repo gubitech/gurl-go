@@ -14,6 +14,7 @@ var (
 	release        string // this is set by the build script
 	flagServer     = flag.String("server", "", "Current server to execute calls against.")
 	includeHeaders bool
+	verbose        bool
 )
 
 type flagValue struct {
@@ -40,6 +41,18 @@ func checkServer(server string) {
 	}
 }
 
+func appendGlobals(args []string) []string {
+	if includeHeaders {
+		args = append(args, "includeHeaders")
+	}
+
+	if verbose {
+		args = append(args, "verbose")
+	}
+
+	return args
+}
+
 func main() {
 	conf, err := globalconf.New("gurl")
 	if err != nil {
@@ -63,11 +76,7 @@ func main() {
 		Short: "Performs a GET request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-
-			if includeHeaders {
-				args = append(args, "includeHeaders")
-			}
-
+			args = appendGlobals(args)
 			execute("GET", version, args)
 		},
 	}
@@ -77,7 +86,7 @@ func main() {
 		Short: "Performs a HEAD request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-
+			args = appendGlobals(args)
 			execute("HEAD", version, args)
 		},
 	}
@@ -87,7 +96,7 @@ func main() {
 		Short: "Performs a OPTIONS request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-
+			args = appendGlobals(args)
 			execute("OPTIONS", version, args)
 		},
 	}
@@ -97,7 +106,7 @@ func main() {
 		Short: "Performs a POST request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-
+			args = appendGlobals(args)
 			execute("POST", version, args)
 		},
 	}
@@ -107,7 +116,7 @@ func main() {
 		Short: "Performs a PATCH request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-
+			args = appendGlobals(args)
 			execute("PATCH", version, args)
 		},
 	}
@@ -117,7 +126,7 @@ func main() {
 		Short: "Performs a DELETE request",
 		Run: func(cmd *cobra.Command, args []string) {
 			checkServer(*flagServer)
-
+			args = appendGlobals(args)
 			execute("DELETE", version, args)
 		},
 	}
@@ -167,6 +176,8 @@ func main() {
 	GurlCmd.AddCommand(versionCmd)
 
 	GurlCmd.PersistentFlags().BoolVarP(&includeHeaders, "include", "i", false, "Include the HTTP-header in the output")
+
+	GurlCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Provide verbose/debug information in the output")
 
 	GurlCmd.Execute()
 }
