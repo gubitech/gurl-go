@@ -1,4 +1,4 @@
-# gURL
+# gurl
 
 Call [curl](http://curl.haxx.se/) from the command line, using sane defaults. Inspired by [resty](https://github.com/micha/resty).
 
