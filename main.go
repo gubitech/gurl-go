@@ -15,6 +15,7 @@ var (
 	flagServer     = flag.String("server", "", "Current server to execute calls against.")
 	includeHeaders bool
 	verbose        bool
+	header         = ""
 )
 
 type flagValue struct {
@@ -50,6 +51,10 @@ func appendFlags() []string {
 
 	if verbose {
 		flags = append(flags, "verbose")
+	}
+
+	if len(header) > 0 {
+		flags = append(flags, "Header: Custom, "+header)
 	}
 
 	return flags
@@ -161,8 +166,8 @@ func main() {
 		Short: "Print the version number of gurl",
 		Long:  "The version number of gurl also includes the User-Agent that's used for requests",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("Current server: %s\n", *flagServer)
-			fmt.Printf("User-Agent: %s\n", version)
+			fmt.Printf("Current server: %s", *flagServer)
+			fmt.Printf("User-Agent: %s", version)
 		},
 	}
 
@@ -178,8 +183,8 @@ func main() {
 	GurlCmd.AddCommand(versionCmd)
 
 	GurlCmd.PersistentFlags().BoolVarP(&includeHeaders, "include", "i", false, "Include the HTTP-header in the output")
-
 	GurlCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Provide verbose/debug information in the output")
+	GurlCmd.PersistentFlags().StringVarP(&header, "header", "H", "", "Source directory to read from")
 
 	GurlCmd.Execute()
 }

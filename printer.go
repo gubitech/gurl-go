@@ -13,7 +13,7 @@ func ErrorPrinter(err interface{}) {
 func isJson(buffer []byte) bool {
 	buf := string(buffer)
 
-	if string(buf[0]) == "{" || (string(buf[0]) == "[" && string(buf[1]) == "{") {
+	if string(buf[0]) == "{" {
 		return true
 	} else {
 		return false

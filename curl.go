@@ -19,15 +19,28 @@ func execute(verb string, version string, args []string, flags []string) {
 	defer easy.Cleanup()
 
 	// set the custom flags
+	// TODO: this switch is dumb.
 	for _, f := range flags {
-		switch f {
-		case "includeHeaders":
-			easy.Setopt(curl.OPT_HEADERFUNCTION, func(buf []byte, userdata interface{}) bool {
-				Print(buf)
-				return true
-			})
-		case "verbose":
-			easy.Setopt(curl.OPT_VERBOSE, true)
+		hasHeader := strings.HasPrefix(f, "Header: Custom")
+
+		if hasHeader {
+			unsplitHeaders := strings.Split(f, ",")
+			headers := make([]string, len(unsplitHeaders))
+
+			for i, e := range unsplitHeaders {
+				headers[i] = strings.TrimSpace(e)
+			}
+			easy.Setopt(curl.OPT_HTTPHEADER, headers)
+		} else {
+			switch f {
+			case "includeHeaders":
+				easy.Setopt(curl.OPT_HEADERFUNCTION, func(buf []byte, userdata interface{}) bool {
+					Print(buf)
+					return true
+				})
+			case "verbose":
+				easy.Setopt(curl.OPT_VERBOSE, true)
+			}
 		}
 	}
 
