@@ -2,7 +2,7 @@
 /pkg
 /src
 .gopack
-build
+build/
 tmp
 log
 .env

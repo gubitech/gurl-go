@@ -3,6 +3,7 @@ set -e
 cd $(dirname $0)/..
 VERSION=0.0.1
 SHA=$(git rev-parse HEAD)
+CC=clang
 GOPATH=$(pwd) go build \
   -ldflags "-X main.release $VERSION-$SHA" \
   -o gurl
